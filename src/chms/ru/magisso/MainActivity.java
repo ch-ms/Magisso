@@ -211,7 +211,7 @@ public class MainActivity extends Activity {
 	public void onBtnSaveClick(View v) {
 		Log.i(TAG, "btn save click");
 		if(!save()){
-			Toast.makeText(getApplicationContext(), "Error while saving, please try again", Toast.LENGTH_LONG);
+			Toast.makeText(getApplicationContext(), "Error while saving, please try again", Toast.LENGTH_LONG).show();
 		}
 	}
 
