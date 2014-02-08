@@ -33,8 +33,13 @@ public class MainActivity extends Activity {
 	private ImageButton btnShare;
 
 	private Bitmap currentBitmap;
+	// If effect applied to image it would be true
 	private Boolean isEffectApplied = false;
+	// Last image saved path
 	private String lastSavedPath = null;
+	// This flag is used to determin saved state in a share action
+	// if image in a current state is already saved by save action then share don't save it again
+	private boolean isSaved = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Load image
+	 * Load image from media gallery or other app
 	 * @param v
 	 */
 	public void loadImage(View v) {
@@ -76,12 +81,10 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Decode image and put it to image view
-	 * 
 	 * @param uri
 	 * @return true - decoding success, otherwise false
 	 */
 	public boolean decodeImageAndPutInImageView(Uri uri) {
-		Log.i(TAG, "decode image " + uri.toString());
 		try {
 			InputStream s = getContentResolver().openInputStream(uri);
 			// Check image size
@@ -120,8 +123,10 @@ public class MainActivity extends Activity {
 			ivImage.setImageBitmap(currentBitmap);
 
 			setCurrentImageUri(uri);
+			// drop out flags to default state
 			isEffectApplied = false;
-			lastSavedPath = null;
+			lastSavedPath = uri.toString();
+			isSaved = true;
 			updateUiState();
 			return true;
 		} catch (Exception e) {
@@ -140,9 +145,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Get current image uri
-	 * 
-	 * @return Current image uri, if there is no image then return empty string
-	 *         ("")
+	 * @return Current image uri, if there is no image then return empty string ("")
 	 */
 	private String getCurrentImageUri() {
 		return getPreferences(MODE_PRIVATE)
@@ -191,8 +194,9 @@ public class MainActivity extends Activity {
 			canvas.drawLine(x1, x2, y1, y2, p);
 			linesLeft--;
 		}
-
+		// set flag so we know what effect is applied (used for ui state)
 		isEffectApplied = true;
+		isSaved = false;
 		updateUiState();
 		ivImage.setImageBitmap(currentBitmap);
 	}
@@ -212,10 +216,10 @@ public class MainActivity extends Activity {
 	 * @param v
 	 */
 	public void share(View v) {
-		if(lastSavedPath==null){
-			save();
+		if(!isSaved){
+			save(); // saving if there is no previous saved images
 		}
-		
+		// start intent to shate
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/jpeg");
 		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(lastSavedPath));
@@ -223,7 +227,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Reset image in image view
+	 * Clear all effects from image
 	 * @param v
 	 */
 	public void resetImage(View v) {
@@ -235,9 +239,10 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Saves current image
-	 * @return True - saved successfull, otherwise false
+	 * @return True - saved successful, otherwise false
 	 */
 	public boolean save() {
+		Log.i(TAG, "saving...");
 		try {
 			File path = Environment
 					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -248,9 +253,10 @@ public class MainActivity extends Activity {
 			FileOutputStream s = new FileOutputStream(f);
 			currentBitmap.compress(CompressFormat.JPEG, 100, s);
 			s.close();
-			
-			lastSavedPath = Uri.fromFile(f).toString(); 
-
+			// set last saved path so share action know what we are already saved
+			lastSavedPath = Uri.fromFile(f).toString();
+			isSaved = true;
+			// update media gallery
 			Intent scan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 			scan.setData(Uri.fromFile(f));
 			sendBroadcast(scan);
