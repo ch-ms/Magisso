@@ -40,13 +40,13 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		ivImage = (ImageView) findViewById(R.id.ivImage);
 		btnMagic = (Button) findViewById(R.id.btnMagic);
 		btnReset = (Button) findViewById(R.id.btnReset);
 		btnSave = (Button) findViewById(R.id.btnSave);
 		btnShare = (ImageButton) findViewById(R.id.btnShare);
-
+		
 		updateUiState();
 	}
 
@@ -81,6 +81,7 @@ public class MainActivity extends Activity {
 	 * @return true - decoding success, otherwise false
 	 */
 	public boolean decodeImageAndPutInImageView(Uri uri) {
+		Log.i(TAG, "decode image " + uri.toString());
 		try {
 			InputStream s = getContentResolver().openInputStream(uri);
 			// Check image size
