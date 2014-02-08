@@ -4,5 +4,7 @@
     <string name="app_name">Magisso</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="load_image_to_start">Load image to start:</string>
+    <string name="load_image">Load image</string>
 
 </resources>
