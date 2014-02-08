@@ -1,5 +1,8 @@
 package chms.ru.magisso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import android.app.Activity;
@@ -8,14 +11,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -28,9 +34,9 @@ public class MainActivity extends Activity {
 	private ImageView ivImage;
 	private Button btnMagic, btnReset, btnSave;
 	private ImageButton btnShare;
-	
+
 	private Bitmap currentBitmap;
-	private Boolean isEffectApplied=false;
+	private Boolean isEffectApplied = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +46,9 @@ public class MainActivity extends Activity {
 		ivImage = (ImageView) findViewById(R.id.ivImage);
 		btnMagic = (Button) findViewById(R.id.btnMagic);
 		btnReset = (Button) findViewById(R.id.btnReset);
-		btnSave  = (Button) findViewById(R.id.btnSave);
+		btnSave = (Button) findViewById(R.id.btnSave);
 		btnShare = (ImageButton) findViewById(R.id.btnShare);
-		
+
 		updateUiState();
 	}
 
@@ -116,9 +122,9 @@ public class MainActivity extends Activity {
 
 			b.recycle();
 			ivImage.setImageBitmap(currentBitmap);
-			
+
 			setCurrentImageUri(uri);
-			isEffectApplied=false;
+			isEffectApplied = false;
 			updateUiState();
 			return true;
 		} catch (Exception e) {
@@ -126,20 +132,24 @@ public class MainActivity extends Activity {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Set current image uri
 	 */
-	private void setCurrentImageUri(Uri uri){
-		getPreferences(MODE_PRIVATE).edit().putString(CURRENT_IMAGE_URI_KEY, uri.toString()).commit();
+	private void setCurrentImageUri(Uri uri) {
+		getPreferences(MODE_PRIVATE).edit()
+				.putString(CURRENT_IMAGE_URI_KEY, uri.toString()).commit();
 	}
-	
+
 	/**
 	 * Get current image uri
-	 * @return Current image uri, if there is no image then return empty string ("") 
+	 * 
+	 * @return Current image uri, if there is no image then return empty string
+	 *         ("")
 	 */
-	private String getCurrentImageUri(){
-		return getPreferences(MODE_PRIVATE).getString(CURRENT_IMAGE_URI_KEY, "");
+	private String getCurrentImageUri() {
+		return getPreferences(MODE_PRIVATE)
+				.getString(CURRENT_IMAGE_URI_KEY, "");
 	}
 
 	/**
@@ -187,7 +197,7 @@ public class MainActivity extends Activity {
 			linesLeft--;
 		}
 
-		isEffectApplied=true;
+		isEffectApplied = true;
 		updateUiState();
 		ivImage.setImageBitmap(currentBitmap);
 	}
@@ -199,6 +209,9 @@ public class MainActivity extends Activity {
 	 */
 	public void onBtnSaveClick(View v) {
 		Log.i(TAG, "btn save click");
+		if(!save()){
+			Toast.makeText(getApplicationContext(), "Error while saving, please try again", Toast.LENGTH_LONG);
+		}
 	}
 
 	/**
@@ -212,33 +225,58 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Reset image in image view
+	 * 
 	 * @param v
 	 */
 	public void resetImage(View v) {
 		Log.i(TAG, "reset");
 		String uri = getCurrentImageUri();
-		if(uri!=""){ decodeImageAndPutInImageView(Uri.parse(uri)); }
+		if (uri != "") {
+			decodeImageAndPutInImageView(Uri.parse(uri));
+		}
 	}
 
 	/**
 	 * Saves current image
+	 * 
+	 * @return True - saved successfull, otherwise false
 	 */
-	public void save() {
+	public boolean save() {
 		Log.i(TAG, "save");
+		try {
+			File path = Environment
+					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+			path.mkdirs();
+			String filename = "magisso_" + System.currentTimeMillis() + ".jpg";
+			File f = new File(path, filename);
+			FileOutputStream s = new FileOutputStream(f);
+			currentBitmap.compress(CompressFormat.JPEG, 100, s);
+			s.close();
+
+			Intent scan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			scan.setData(Uri.fromFile(f));
+			sendBroadcast(scan);
+
+			return true;
+		} catch (Exception e) {
+			Log.e(TAG, "error while saving", e);
+			return false;
+		}
 	}
-	
+
 	/**
 	 * Updates ui state
 	 */
-	private void updateUiState(){
+	private void updateUiState() {
 		Log.i(TAG, "update ui" + ivImage.getDrawable());
-		btnMagic.setEnabled(!(ivImage.getDrawable()==null));
-		btnSave.setEnabled(!(ivImage.getDrawable()==null));
-		btnShare.setEnabled(!(ivImage.getDrawable()==null));
+		btnMagic.setEnabled(!(ivImage.getDrawable() == null));
+		btnSave.setEnabled(!(ivImage.getDrawable() == null));
+		btnShare.setEnabled(!(ivImage.getDrawable() == null));
 		btnReset.setEnabled(isEffectApplied);
-		if(isEffectApplied){	
+		if (isEffectApplied) {
 			btnMagic.setText(R.string.more_magic);
-		}else{
+		} else {
 			btnMagic.setText(R.string.magic);
 		}
 	}
