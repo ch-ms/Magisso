@@ -9,9 +9,9 @@
     tools:context=".MainActivity" >
 
     <RelativeLayout
+        android:id="@+id/topPanel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/topPanel" >
+        android:layout_height="wrap_content" >
 
         <TextView
             android:id="@+id/lblLoadImage"
@@ -19,17 +19,17 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textSize="20sp"
-            android:text="@string/load_image_to_start" />
+            android:text="@string/load_image_to_start"
+            android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/btnLoadImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/lblLoadImage"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:contentDescription="@string/load_image" />
-        
+            android:contentDescription="@string/load_image"
+            android:onClick="loadImage"
+            android:src="@android:drawable/ic_menu_gallery" />
     </RelativeLayout>
 
     <LinearLayout
@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
+            android:onClick="makeMagic"
             android:text="Magic" />
 
         <Button
@@ -50,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
+            android:onClick="onBtnSaveClick"
             android:text="Save" />
 
         <ImageButton
@@ -57,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:src="@android:drawable/ic_menu_share" />
+            android:src="@android:drawable/ic_menu_share"
+            android:onClick="share" />
     </LinearLayout>
 
     <ImageView
@@ -66,7 +69,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottomPanel"
         android:layout_below="@id/topPanel"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
