@@ -1,17 +1,16 @@
 package chms.ru.magisso;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +36,7 @@ public class MainActivity extends Activity {
 
 	private Bitmap currentBitmap;
 	private Boolean isEffectApplied = false;
+	private String lastSavedPath = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +125,7 @@ public class MainActivity extends Activity {
 
 			setCurrentImageUri(uri);
 			isEffectApplied = false;
+			lastSavedPath = null;
 			updateUiState();
 			return true;
 		} catch (Exception e) {
@@ -221,6 +222,14 @@ public class MainActivity extends Activity {
 	 */
 	public void share(View v) {
 		Log.i(TAG, "share");
+		if(lastSavedPath==null){
+			save();
+		}
+		
+		Intent share = new Intent(Intent.ACTION_SEND);
+		share.setType("image/jpeg");
+		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(lastSavedPath));
+		startActivity(Intent.createChooser(share, "Share with..."));
 	}
 
 	/**
@@ -253,6 +262,8 @@ public class MainActivity extends Activity {
 			FileOutputStream s = new FileOutputStream(f);
 			currentBitmap.compress(CompressFormat.JPEG, 100, s);
 			s.close();
+			
+			lastSavedPath = Uri.fromFile(f).toString(); 
 
 			Intent scan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 			scan.setData(Uri.fromFile(f));
