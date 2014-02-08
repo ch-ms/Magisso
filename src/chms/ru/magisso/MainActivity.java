@@ -96,8 +96,6 @@ public class MainActivity extends Activity {
 			currentBitmap = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
 					Bitmap.Config.ARGB_8888);
 			
-			Log.i(TAG, "draw bitmap on canvas");
-			
 			Canvas canvas = new Canvas(currentBitmap);
 			canvas.drawBitmap(b, 0, 0, null);
 
