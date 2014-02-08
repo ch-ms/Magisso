@@ -33,11 +33,13 @@ public class MainActivity extends Activity {
 	private ImageButton btnShare;
 
 	private Bitmap currentBitmap;
+	
 	// If effect applied to image it would be true
 	private Boolean isEffectApplied = false;
-	// Last image saved path
+	// Last saved path of image
 	private String lastSavedPath = null;
-	// This flag is used to determin saved state in a share action
+	
+	// This flag is used to determine saved state in a share action
 	// if image in a current state is already saved by save action then share don't save it again
 	private boolean isSaved = false;
 
@@ -219,7 +221,7 @@ public class MainActivity extends Activity {
 		if(!isSaved){
 			save(); // saving if there is no previous saved images
 		}
-		// start intent to shate
+		// start intent to share
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/jpeg");
 		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(lastSavedPath));
