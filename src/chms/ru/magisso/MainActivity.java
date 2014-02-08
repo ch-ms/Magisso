@@ -25,9 +25,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private static final String CURRENT_IMAGE_URI_KEY = "currentImageUri";
-
 	private static final int MEDIA_LIB_REQUEST_CODE = 0;
-
 	private static final String TAG = "MainActivity";
 
 	private ImageView ivImage;
@@ -61,11 +59,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Load image
-	 * 
 	 * @param v
 	 */
 	public void loadImage(View v) {
-		Log.i(TAG, "load image");
 		Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 		i.setType("image/*");
 		startActivityForResult(i, MEDIA_LIB_REQUEST_CODE);
@@ -85,7 +81,6 @@ public class MainActivity extends Activity {
 	 * @return true - decoding success, otherwise false
 	 */
 	public boolean decodeImageAndPutInImageView(Uri uri) {
-		Log.i(TAG, "decode");
 		try {
 			InputStream s = getContentResolver().openInputStream(uri);
 			// Check image size
@@ -168,11 +163,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Make random visual effect with lines
-	 * 
 	 * @param v
 	 */
 	public void makeMagic(View v) {
-		Log.i(TAG, "make magic");
 		Canvas canvas = new Canvas(currentBitmap);
 		Paint p = new Paint();
 
@@ -205,11 +198,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Click on save button
-	 * 
 	 * @param v
 	 */
 	public void onBtnSaveClick(View v) {
-		Log.i(TAG, "btn save click");
 		if(!save()){
 			Toast.makeText(getApplicationContext(), "Error while saving, please try again", Toast.LENGTH_LONG).show();
 		}
@@ -217,11 +208,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Share
-	 * 
 	 * @param v
 	 */
 	public void share(View v) {
-		Log.i(TAG, "share");
 		if(lastSavedPath==null){
 			save();
 		}
@@ -234,11 +223,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Reset image in image view
-	 * 
 	 * @param v
 	 */
 	public void resetImage(View v) {
-		Log.i(TAG, "reset");
 		String uri = getCurrentImageUri();
 		if (uri != "") {
 			decodeImageAndPutInImageView(Uri.parse(uri));
@@ -247,11 +234,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Saves current image
-	 * 
 	 * @return True - saved successfull, otherwise false
 	 */
 	public boolean save() {
-		Log.i(TAG, "save");
 		try {
 			File path = Environment
 					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
