@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
@@ -23,8 +25,12 @@ public class MainActivity extends Activity {
 
 	private static final String TAG = "MainActivity";
 
-	ImageView ivImage;
-	Bitmap currentBitmap;
+	private ImageView ivImage;
+	private Button btnMagic, btnReset, btnSave;
+	private ImageButton btnShare;
+	
+	private Bitmap currentBitmap;
+	private Boolean isEffectApplied=false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		ivImage = (ImageView) findViewById(R.id.ivImage);
+		btnMagic = (Button) findViewById(R.id.btnMagic);
+		btnReset = (Button) findViewById(R.id.btnReset);
+		btnSave  = (Button) findViewById(R.id.btnSave);
+		btnShare = (ImageButton) findViewById(R.id.btnShare);
+		
+		updateUiState();
 	}
 
 	@Override
@@ -106,6 +118,8 @@ public class MainActivity extends Activity {
 			ivImage.setImageBitmap(currentBitmap);
 			
 			setCurrentImageUri(uri);
+			isEffectApplied=false;
+			updateUiState();
 			return true;
 		} catch (Exception e) {
 			Log.e(TAG, "error while decoding image", e);
@@ -173,6 +187,8 @@ public class MainActivity extends Activity {
 			linesLeft--;
 		}
 
+		isEffectApplied=true;
+		updateUiState();
 		ivImage.setImageBitmap(currentBitmap);
 	}
 
@@ -209,5 +225,21 @@ public class MainActivity extends Activity {
 	 */
 	public void save() {
 		Log.i(TAG, "save");
+	}
+	
+	/**
+	 * Updates ui state
+	 */
+	private void updateUiState(){
+		Log.i(TAG, "update ui" + ivImage.getDrawable());
+		btnMagic.setEnabled(!(ivImage.getDrawable()==null));
+		btnSave.setEnabled(!(ivImage.getDrawable()==null));
+		btnShare.setEnabled(!(ivImage.getDrawable()==null));
+		btnReset.setEnabled(isEffectApplied);
+		if(isEffectApplied){	
+			btnMagic.setText(R.string.more_magic);
+		}else{
+			btnMagic.setText(R.string.magic);
+		}
 	}
 }

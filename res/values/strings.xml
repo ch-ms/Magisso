@@ -8,6 +8,7 @@
     <string name="load_image">Load image</string>
     <string name="reset_image">Reset</string>
     <string name="magic">Magic</string>
+    <string name="more_magic">More...</string>
     <string name="save">Save</string>
 
 </resources>
